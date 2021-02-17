@@ -1,0 +1,15 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    slop (4.8.2)
+    sqlite3 (1.4.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  slop
+  sqlite3
+
+BUNDLED WITH
+   2.1.4
