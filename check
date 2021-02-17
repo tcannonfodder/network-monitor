@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
+
+require_relative 'database'
+require_relative 'check_classes'
+
+opts = Slop.parse do |o|
+  o.string '-i', '--input-file', 'the sites.txt file to use (default: sites.txt)', default: 'sites.txt'
+  o.string '--database', 'the sqlite database to use (default: monitor.sqlite)', default: 'monitor.sqlite'
+  o.bool '-v', '--verbose', 'enable verbose mode', default: false
+  o.on '-h', '--help' do
+    puts o
+    exit
+  end
+  o.on '--version', 'print the version' do
+    puts "1.0"
+    exit
+  end
+end
+
+def logger
+  Thread.current[:logger] ||= Logger.new(STDOUT)
+end
+
+if opts[:verbose]
+  logger.level = Logger::DEBUG
+else
+  logger.level = Logger::INFO
+end
+
+database = Database.new(path: opts[:database])
+url_strings = File.read(opts[:"input-file"]).split("\n").map{|x| x.strip }.reject{|x| x.empty?}.compact.uniq
+
+check = Check.new(url_strings: url_strings)
+
+check.run_checks
+check.save!(database: database)

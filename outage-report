@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
+
+require_relative 'database'
+
+opts = Slop.parse do |o|
+  o.string '-o', '--output-file', 'the file to write to (default: outage-report.csv)', default: 'outage-report.csv'
+  o.string '--database', 'the sqlite database to use (default: monitor.sqlite)', default: 'monitor.sqlite'
+  o.bool '-v', '--verbose', 'enable verbose mode', default: false
+  o.on '-h', '--help' do
+    puts o
+    exit
+  end
+  o.on '--version', 'print the version' do
+    puts "1.0"
+    exit
+  end
+end
+
+def logger
+  Thread.current[:logger] ||= Logger.new(STDOUT)
+end
+
+if opts[:verbose]
+  logger.level = Logger::DEBUG
+else
+  logger.level = Logger::INFO
+end
+
+database = Database.new(path: opts[:database])
+
+check_history = database.get_ordered_checks
+outage_report = OutageReport.from(check_history: check_history)
+
+
+CSV.open(opts[:"output-file"], "wb") do |csv|
+  csv << ["status", "start", "end", "duration (HH:MM:SS)"]
+  outage_report.each do |status|
+    csv << [status.status, status.start, status.end, status.duration]
+  end
+end
