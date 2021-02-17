@@ -88,7 +88,7 @@ class Database
 
   def get_ordered_checks
     select_sql = <<-SQL
-      SELECT * FROM checks ORDER BY created_at ASC;
+      SELECT * FROM checks ORDER BY created_at DESC;
     SQL
 
     results = []
