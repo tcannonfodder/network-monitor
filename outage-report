@@ -32,10 +32,14 @@ end
 
 database = Database.new(path: opts[:database])
 
+logger.debug('getting ordered checks')
 check_history = database.get_ordered_checks
+
+logger.debug("building report")
 outage_report = OutageReport.from(check_history: check_history)
 
 
+logger.info("saving report")
 CSV.open(opts[:"output-file"], "wb") do |csv|
   csv << ["status", "start", "end", "duration (HH:MM:SS)"]
   outage_report.each do |status|
