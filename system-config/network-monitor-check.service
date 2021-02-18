@@ -1,0 +1,17 @@
+[Unit]
+Description=Perform network check
+After=network.target
+
+[Service]
+Type=simple
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+ExecStart=./check
+WorkingDirectory=/home/pi/network-monitor
+StandardOutput=inherit
+StandardError=inherit
+User=pi
+
+[Install]
+WantedBy=multi-user.target

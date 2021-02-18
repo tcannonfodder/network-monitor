@@ -1,0 +1,17 @@
+[Unit]
+Description=Generate outage report for network monitor
+After=network.target
+
+[Service]
+Type=simple
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+ExecStart=./outage-report
+WorkingDirectory=/home/pi/network-monitor
+StandardOutput=inherit
+StandardError=inherit
+User=pi
+
+[Install]
+WantedBy=multi-user.target
