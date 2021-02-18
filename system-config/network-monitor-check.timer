@@ -1,5 +1,6 @@
 [Unit]
 Description=Perform network check
+Requires=network-monitor-check.service
 
 [Timer]
 OnCalendar=*:0/5

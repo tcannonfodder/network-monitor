@@ -1,5 +1,6 @@
 [Unit]
 Description=Generate outage report for network monitor
+Requires=network-monitor-outage-report.service
 
 [Timer]
 OnCalendar=daily
